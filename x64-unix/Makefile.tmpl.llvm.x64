@@ -1,0 +1,105 @@
+###############################################################################
+# Created By: Subhashis Mohanty <subhashis@pixrune.com>
+# Created At: Fri Sep 25 12:21:07 PDT 2015
+# Copyright: (c) 2015 Subhashis Mohanty. All Rights Reserved.
+###############################################################################
+ifndef MAKEFILE_TMPL_LLVM_X64
+###############################################################################
+# A Makefile template for libraries.                                           
+###############################################################################
+ifndef A_BRANCH
+    $(error A_BRANCH must be defined!)
+endif
+###############################################################################
+ifeq ($(A_BRANCH), "")
+    $(error A_BRANCH must be non-empty!)
+endif
+###############################################################################
+ifndef DS_ARCH
+    $(error DS_ARCH must be defined!)
+endif
+###############################################################################
+ifeq ($(DS_ARCH), "")
+    $(warning  )
+    $(error DS_ARCH must be non-empty!)
+endif
+###############################################################################
+ifndef DS_LIBROOTDIR
+    $(error DS_LIBROOTDIR must be defined!)
+endif
+###############################################################################
+ifeq ($(DS_LIBROOTDIR), "")
+    $(error DS_LIBROOTDIR must be non-empty!)
+endif
+###############################################################################
+B_BRANCH = $(A_BRANCH)$(DS_ARCH)
+###############################################################################
+TARGET   = DSLib$(B_BRANCH)Lib
+ifdef A_BRANCH_NOLIB
+TPLAIN   = $(A_BRANCH)
+else
+TPLAIN   = $(A_BRANCH)Lib
+endif
+ARCHIVE  = $(TARGET).a
+#
+SHR_STEM = lib$(B_BRANCH)
+ifeq ($(TGTARCH), x64-darwin-macos)
+SHR_LIBD = $(SHR_STEM).d.1.0.dylib
+SHR_LIBR = $(SHR_STEM).r.1.0.dylib
+else ifeq ($(TGTARCH), x64-linux)
+SHR_LIBD = $(SHR_STEM).d.so.1.0
+SHR_LIBR = $(SHR_STEM).r.so.1.0
+endif
+#
+PRJ_NAME = ../../../
+DIR_PRJ  = ../../..
+DIR_SUB  = ../..
+###############################################################################
+ifeq ($(TGTARCH), "")
+    $(warning  )
+    $(error TGTARCH must be non-empty)
+endif
+###############################################################################
+ifndef CODE_TOP
+    $(warning "CODE_TOP is not defined! Here is what you need to do:")
+    $(warning  )
+    $(warning "At the top-level (in directory containing 3rdParty, Corp, etc.)")
+    $(warning  )
+    $(warning "$ source Scripts/DevEnv")
+    $(warning  )
+    $(error CODE_TOP must be defined!)
+endif
+###############################################################################
+ifeq ($(CODE_TOP), "")
+    $(warning "CODE_TOP is empty! Here is what you need to do:")
+    $(warning  )
+    $(warning "At the top-level (in directory containing 3rdParty, Corp, etc.)")
+    $(warning  )
+    $(warning "$ source Scripts/DevEnv")
+    $(warning  )
+    $(error CODE_TOP must be non-empty!)
+endif
+###############################################################################
+export LOCAL_FLAGS = -fpic
+###############################################################################
+export DS_$(TPLAN) :=
+###############################################################################
+include $(CODE_TOP)/MakeTemplates/MakeInclude.x64
+###############################################################################
+include $(DS_LIBROOTDIR)/$(TPLAIN)/External/MakeTemplates/x64-unix/MakeInclude.$(TPLAIN).def.x64
+###############################################################################
+ifeq ($(ROUTE), INDIRECT)
+    export DEP_LIB_CLEAN_D  :=
+    export DEP_LIB_CLEAN_R  :=
+    export DEP_LIB_TGT_D    :=
+    export DEP_LIB_TGT_R    :=
+#
+    export DEP_LIB_S_TGT_D  :=
+    export DEP_LIB_S_TGT_R  :=
+endif
+###############################################################################
+include $(CODE_TOP)/MakeTemplates/x64-unix/MakeInclude.llvm.x64
+###############################################################################
+#export MAKEFILE_TMPL_LLVM_X64 := TRUE
+endif
+###############################################################################

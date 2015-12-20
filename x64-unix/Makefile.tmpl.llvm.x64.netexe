@@ -1,0 +1,131 @@
+###############################################################################
+# Created By: Subhashis Mohanty <subhashis@pixrune.com>
+# Created At: Fri Sep 25 12:21:07 PDT 2015
+# Copyright: (c) 2015 Subhashis Mohanty. All Rights Reserved.
+###############################################################################
+# A Makefile template for executables
+###############################################################################
+ifndef MAKEFILE_TMPL_LLVM_X64_NETEXE
+###############################################################################
+ifndef A_BRANCH
+    $(error A_BRANCH must be defined!)
+endif
+###############################################################################
+ifeq ($(A_BRANCH), "")
+    $(error A_BRANCH must be non-empty!)
+endif
+###############################################################################
+ifndef DS_ARCH
+    $(error DS_ARCH must be defined!)
+endif
+###############################################################################
+ifeq ($(DS_ARCH), "")
+    $(warning  )
+    $(error DS_ARCH must be non-empty!)
+endif
+###############################################################################
+ifndef DS_APPROOTDIR
+    $(error DS_APPROOTDIR must be defined!)
+endif
+###############################################################################
+ifeq ($(DS_LIBROOTDIR), "")
+    $(error DS_LIBROOTDIR must be non-empty!)
+endif
+###############################################################################
+TARGET   = DSLib$(A_BRANCH)Lib
+###############################################################################
+ifdef A_BRANCH_NOLIB
+    TPLAIN   = $(A_BRANCH)
+else
+    TPLAIN   = $(A_BRANCH)Lib
+endif
+ARCHIVE  = $(TARGET).a
+#
+SHR_STEM = lib$(A_BRANCH)
+ifeq ($(TGTARCH), x64-darwin-macos)
+SHR_LIBD = $(SHR_STEM).d.1.0.dylib
+SHR_LIBR = $(SHR_STEM).r.1.0.dylib
+else ifeq ($(TGTARCH), x64-linux)
+SHR_LIBD = $(SHR_STEM).d.so.1.0
+SHR_LIBR = $(SHR_STEM).r.so.1.0
+endif
+#
+PRJ_NAME = ../../../
+DIR_PRJ  = ../../..
+DIR_SUB  = ../..
+###############################################################################
+TARGETTYPE = DS_NET_APP
+###############################################################################
+ifeq ($(TGTARCH), "")
+    $(warning  )
+    $(error TGTARCH must be non-empty)
+endif
+###############################################################################
+ifndef CODE_TOP
+    $(warning "CODE_TOP is not defined! Here is what you need to do:")
+    $(warning  )
+    $(warning "At the top-level (in directory containing 3rdParty, Corp, etc.)")
+    $(warning  )
+    $(warning "$ source Scripts/DevEnv")
+    $(warning  )
+    $(error CODE_TOP must be defined!)
+endif
+###############################################################################
+ifeq ($(CODE_TOP), "")
+    $(warning "CODE_TOP is empty! Here is what you need to do:")
+    $(warning  )
+    $(warning "At the top-level (in directory containing 3rdParty, Corp, etc.)")
+    $(warning  )
+    $(warning "$ source Scripts/DevEnv")
+    $(warning  )
+    $(error CODE_TOP must be non-empty!)
+endif
+###############################################################################
+export D_STR         := External/Lib/$(TGTARCH)/Debug
+export R_STR         := External/Lib/$(TGTARCH)/Release
+###############################################################################
+DS_DEPDIR_D         := $(patsubst %,-L$(XPLATDIR)/%Lib/$(D_STR),$(DS_ARCHIVES))
+DS_DEPDIR_D         += $(patsubst %,-L$(XPLATEXTDIR)/%Lib/$(D_STR),$(DS_EXT_ARCHIVES))
+DS_DEPDIR_D         += -L$(DS_APPROOTDIR)/$(A_BRANCH)/$(D_STR)
+#
+DS_DEPDIR_R         := $(patsubst %,-L$(XPLATDIR)/%Lib/$(R_STR),$(DS_ARCHIVES))
+DS_DEPDIR_R         += $(patsubst %,-L$(XPLATEXTDIR)/%Lib/$(R_STR),$(DS_EXT_ARCHIVES))
+DS_DEPDIR_R         += -L$(DS_APPROOTDIR)/$(A_BRANCH)/$(R_STR)
+###############################################################################
+export LOCAL_FLAGS = -fPIC
+###############################################################################
+export DS_Test      :=
+###############################################################################
+ifeq ($(TGTARCH), x64-linux)
+    export APP_LIBDIRS   += -L/usr/lib64
+endif
+###############################################################################
+export APP_LIBDIRS_D := $(DS_DEPDIR_D) $(APP_LIBDIRS)
+###############################################################################
+export APP_LIBDIRS_R := $(DS_DEPDIR_R) $(APP_LIBDIRS)
+###############################################################################
+export LIBS_LOCAL    += 
+###############################################################################
+LIBS_LOCAL_S_D       := $(patsubst %,lib%$(DS_ARCH).d.1.0.dylib,$(DS_ARCHIVES_ALL))
+LIBS_LOCAL_S_D       += lib$(A_BRANCH).d.1.0.dylib
+#
+LIBS_LOCAL_S_R       := $(patsubst %,lib%$(DS_ARCH).r.1.0.dylib,$(DS_ARCHIVES_ALL))
+LIBS_LOCAL_S_R       += lib$(A_BRANCH).r.1.0.dylib
+###############################################################################
+include $(DS_APPROOTDIR)/$(TPLAIN)/External/MakeTemplates/x64-unix/MakeInclude.$(TPLAIN).def.x64
+###############################################################################
+# ifeq ($(ROUTE), INDIRECT)
+#      export DEP_LIB_CLEAN_D  :=
+#      export DEP_LIB_CLEAN_R  :=
+#      export DEP_LIB_TGT_D    :=
+#      export DEP_LIB_TGT_R    :=
+# #
+#      export DEP_LIB_S_TGT_D  :=
+#      export DEP_LIB_S_TGT_R  :=
+# endif
+###############################################################################
+include $(CODE_TOP)/MakeTemplates/x64-unix/MakeInclude.llvm.x64.netexe
+###############################################################################
+#export MAKEFILE_TMPL_LLVM_X64_NETEXE := TRUE
+endif
+###############################################################################

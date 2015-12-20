@@ -1,0 +1,336 @@
+###############################################################################
+# Created By: Subhashis Mohanty <subhashis@pixrune.com>
+# Created At: Fri Sep 25 12:21:07 PDT 2015
+# Copyright: (c) 2015 Subhashis Mohanty. All Rights Reserved.
+###############################################################################
+# A GENERALIZED Makefile                                                      #
+#                                                                             #
+# It contains elements common to all our Makefiles and specializations.       #
+###############################################################################
+ifndef MAKEINCLUDE_LLVM_X64
+###############################################################################
+include $(CODE_TOP)/MakeTemplates/MakeInclude.x64
+include $(CODE_TOP)/MakeTemplates/x64-unix/MakeInclude.llvm.x64.common
+###############################################################################
+# PRJ_NAME holds the current project. The assumption is that we will package
+# archives, binaries, libraries, DLLs etc. at this level. Also build objects
+# and intermediate files.
+###############################################################################
+DIR_BLD  = $(DIR_SUB)/Build
+###############################################################################
+DST_D    = $(DIR_BLD)/$(TGTARCH)/Debug
+DST_R    = $(DIR_BLD)/$(TGTARCH)/Release
+AR_DST_D = $(DIR_SUB)/External/Lib/$(TGTARCH)/Debug
+AR_DST_R = $(DIR_SUB)/External/Lib/$(TGTARCH)/Release
+###############################################################################
+MK_DST_D    := $(shell mkdir -p $(DST_D))
+MK_DST_R    := $(shell mkdir -p $(DST_R))
+MK_AR_DST_D := $(shell mkdir -p $(AR_DST_D))
+MK_AR_DST_R := $(shell mkdir -p $(AR_DST_R))
+###############################################################################
+# Include directories
+#
+# The expansions should explain the orgranization philosophy. The notion
+# of 'Friend' is borrowed from C++, where, for example, insertion and
+# extraction operators,
+#
+# ostream& operator<<(ostream& lhs, ostream& rhs) // &
+# istream& operator>>(istream& lhs, istream& rhs) //
+#
+# are typically added as friend functions of a class. See Scott Meyers'
+# 'Effective C++' for the rationale behind making these operators friends.
+# 
+# In our model friend projects have more privileges and are allowed to
+# see some internal headers.
+###############################################################################
+ifeq ($(TGTARCH), x64-linux)
+GCCINCLOC  = /usr/include/c++/$(GCCVER)
+INC_SYSTEM = -I$(GCCINCLOC) -I$(GCCINCLOC)/$(GCCHOST)
+else ifeq ($(TGTARCH), x64-darwin-macos)
+INC_SYSTEM  = 
+endif
+###############################################################################
+INC_PRV     =   ../Inc
+INC_FRND    =   ../Friend/Inc
+INC_EXT     =   ../../External/Inc
+###############################################################################
+INC_DIRECTIVE  = -I$(INC_PRV) -I$(INC_FRND) -I$(INC_EXT) $(IMPORTED_INC) $(INC_SYSTEM) $(LOCAL_INC_STR)
+###############################################################################
+# CXX files and objects
+###############################################################################
+CXX_FILES  := $(wildcard *.cxx)
+###############################################################################
+CXX_FILES_NSTL := $(patsubst %STLMattersImpl.cxx,,$(CXX_FILES))
+CXX_FILES_STL  := $(filter %STLMattersImpl.cxx,$(CXX_FILES))
+###############################################################################
+DEPS_NSTL_CXX  := $(notdir $(CXX_FILES_NSTL:.cxx=.d))
+DEPS_STL_CXX   := $(notdir $(CXX_FILES_STL:.cxx=.d))
+###############################################################################
+DEPS_CXX_NSTL_D := $(addprefix $(DST_D)/, $(DEPS_NSTL_CXX))
+DEPS_CXX_STL_D  := $(addprefix $(DST_D)/, $(DEPS_STL_CXX))
+DEPS_CXX_NSTL_R := $(addprefix $(DST_R)/, $(DEPS_NSTL_CXX))
+DEPS_CXX_STL_R  := $(addprefix $(DST_R)/, $(DEPS_STL_CXX))
+###############################################################################
+# C files and objects
+###############################################################################
+C_FILES  := $(wildcard *.c)
+###############################################################################
+DEPS_C   := $(notdir $(C_FILES:.c=.d))
+DEPS_C_D := $(addprefix $(DST_D)/, $(DEPS_C))
+DEPS_C_R := $(addprefix $(DST_R)/, $(DEPS_C))
+###############################################################################
+# Explicit targets we support.
+###############################################################################
+FINALS     := dbg rel
+ALL        := all
+CLEAN      := clean
+ALLTARGETS := $(CLEAN) $(FINALS)
+###############################################################################
+OBJS_CXX_NSTL_D := $(patsubst %.cxx,$(DST_D)/%.o,$(CXX_FILES_NSTL))
+PP_CXX_NSTL_D   := $(patsubst %.cxx,$(DST_D)/%.ii,$(CXX_FILES_NSTL))
+OBJS_CXX_NSTL_R := $(patsubst %.cxx,$(DST_R)/%.o,$(CXX_FILES_NSTL))
+PP_CXX_NSTL_R   := $(patsubst %.cxx,$(DST_R)/%.ii,$(CXX_FILES_NSTL))
+###############################################################################
+OBJS_CXX_STL_D := $(patsubst %.cxx,$(DST_D)/%.o,$(CXX_FILES_STL))
+PP_CXX_STL_D   := $(patsubst %.cxx,$(DST_D)/%.ii,$(CXX_FILES_STL))
+OBJS_CXX_STL_R := $(patsubst %.cxx,$(DST_R)/%.o,$(CXX_FILES_STL))
+PP_CXX_STL_R   := $(patsubst %.cxx,$(DST_R)/%.ii,$(CXX_FILES_STL))
+###############################################################################
+OBJS_C_D   := $(patsubst %.c,$(DST_D)/%.o,$(C_FILES))
+PP_C_D     := $(patsubst %.c,$(DST_D)/%.i,$(C_FILES))
+OBJS_C_R   := $(patsubst %.c,$(DST_R)/%.o,$(C_FILES))
+PP_C_R     := $(patsubst %.c,$(DST_R)/%.i,$(C_FILES))
+###############################################################################
+DSTS       := dst_d dst_r
+###############################################################################
+# ARCHIVE
+###############################################################################
+AR_D            := $(addprefix $(AR_DST_D)/, $(ARCHIVE))
+AR_R            := $(addprefix $(AR_DST_R)/, $(ARCHIVE))
+###############################################################################
+# SHARED LIBRARY
+###############################################################################
+SHR_D           := $(addprefix $(AR_DST_D)/, $(SHR_LIBD))
+SHR_R           := $(addprefix $(AR_DST_R)/, $(SHR_LIBR))
+###############################################################################
+# Convenient grouping
+###############################################################################
+ALL_D_BINARIES := $(AR_D) $(AR_DST_D)/$(SHR_STEM).* $(OBJS_C_D) $(OBJS_CXX_NSTL_D) $(OBJS_CXX_STL_D)
+ALL_R_BINARIES := $(AR_R) $(AR_DST_R)/$(SHR_STEM).* $(OBJS_C_R) $(OBJS_CXX_NSTL_R) $(OBJS_CXX_STL_R)
+PP_DS          := $(PP_CXX_NSTL_D) $(PP_CXX_STL_D) $(PP_C_D)
+PP_RS          := $(PP_CXX_NSTL_R) $(PP_CXX_STL_R) $(PP_C_R)
+###############################################################################
+DEPS_DS        := $(DEPS_CXX_NSTL_D) $(DEPS_CXX_STL_D) $(DEPS_C_D)
+DEPS_RS        := $(DEPS_CXX_NSTL_R) $(DEPS_CXX_STL_R) $(DEPS_C_R)
+###############################################################################
+-include $(DEPS_DS) $(DEPS_RS)
+###############################################################################
+clean:  clean_dbg clean_rel
+###############################################################################
+dbg: $(AR_D) $(SHR_D) $(DEP_LIB_TGT_D) $(DEP_LIB_S_TGT_D)
+rel: $(AR_R) $(SHR_R) $(DEP_LIB_TGT_R) $(DEP_LIB_S_TGT_R)
+
+###############################################################################
+dbg_header:
+ifneq ($(ROUTE), INDIRECT)
+	@echo "	-------------- making dbg ----------------"
+endif
+###############################################################################
+dbg_footer:
+ifneq ($(ROUTE), INDIRECT)
+	@echo "	-------------- made dbg ----------------"
+endif
+###############################################################################
+
+###############################################################################
+ifneq ($(ROUTE), INDIRECT)
+rel_header:
+	@echo "	-------------- making rel ----------------"
+endif
+###############################################################################
+ifneq ($(ROUTE), INDIRECT)
+rel_footer:
+	@echo "	-------------- made rel ----------------"
+endif
+###############################################################################
+
+####################### Clean ##############################################
+clean_dbg: $(DEP_LIB_CLEAN_D)
+ifeq ($(DS_VERBOSE), 1)
+	$(RM) $(DEPS_DS) $(ALL_D_BINARIES) $(PP_DS)
+else
+	@$(RM) $(DEPS_DS) $(ALL_D_BINARIES) $(PP_DS)
+	@echo [CLEAN]
+	@echo "	$(notdir $(DEPS_DS))"
+	@echo "	$(notdir $(ALL_D_BINARIES))"
+	@echo "	$(notdir $(PP_DS))"
+endif
+###############################################################################
+clean_rel: $(DEP_LIB_CLEAN_R)
+ifeq ($(DS_VERBOSE), 1)
+	$(RM) $(DEPS_RS) $(ALL_R_BINARIES) $(PP_RS)
+else
+	@$(RM) $(DEPS_RS) $(ALL_R_BINARIES) $(PP_RS)
+	@echo [CLEAN]
+	@echo "	$(notdir $(DEPS_RS))"
+	@echo "	$(notdir $(ALL_R_BINARIES))"
+	@echo "	$(notdir $(PP_RS))"
+endif
+####################### Debug #############################################
+$(OBJS_CXX_NSTL_D) : $(DST_D)/%.o: %.cxx
+ifeq ($(DS_VERBOSE), 1)
+	$(CXX) $(CXX_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+else
+	@$(CXX) $(CXX_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+	@echo "[CXX][DBG]   $<"
+endif
+###############################################################################
+$(OBJS_CXX_STL_D) : $(DST_D)/%.o: %.cxx
+ifeq ($(DS_VERBOSE), 1)
+	$(CXX) $(CXX_FLAGS_STL_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+else
+	@$(CXX) $(CXX_FLAGS_STL_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+	@echo "[CXX][DBG]   $<"
+endif
+###############################################################################
+$(PP_CXX_NSTL_D) : $(DST_D)/%.ii: %.cxx
+	$(CXX) $(CXX_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -E $<
+###############################################################################
+$(PP_CXX_STL_D) : $(DST_D)/%.ii: %.cxx
+	$(CXX) $(CXX_FLAGS_STL_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -E $<
+###############################################################################
+$(OBJS_C_D) : $(DST_D)/%.o: %.c
+	$(CC) $(C_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+###############################################################################
+$(PP_C_D) : $(DST_D)/%.i: %.c
+	$(CC) $(C_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -E $<
+###############################################################################
+$(DEPS_CXX_NSTL_D) : $(DST_D)/%.d: %.cxx
+	@set -e; $(RM) $@; \
+	$(CXX) -M -MQ '$(@:.d=.o)' $(CXX_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	$(RM) $@.$$$$
+###############################################################################
+$(DEPS_CXX_STL_D) : $(DST_D)/%.d: %.cxx
+	@set -e; $(RM) $@; \
+	$(CXX) -M -MQ '$(@:.d=.o)' $(CXX_FLAGS_STL_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	$(RM) $@.$$$$
+###############################################################################
+$(DEPS_C_D) : $(DST_D)/%.d: %.c
+	@set -e; $(RM) $@; \
+	$(CC) -M -MQ '$(@:.d=.o)' $(C_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	$(RM) $@.$$$$
+###############################################################################
+$(AR_D) : $(OBJS_C_D) $(OBJS_CXX_NSTL_D) $(OBJS_CXX_STL_D) 
+ifeq ($(DS_VERBOSE), 1)
+	$(AR) $(AR_CREATE_FLAGS) $@ $^
+else
+	@$(AR) $(AR_CREATE_FLAGS) $@ $^ >/dev/null 2>&1
+	@echo "[AR][DBG]    $(notdir $@)"
+endif
+###############################################################################
+$(SHR_D) : $(OBJS_C_D) $(OBJS_CXX_NSTL_D) $(OBJS_CXX_STL_D)
+ifeq ($(TGTARCH), x64-darwin-macos)
+ifeq ($(DS_VERBOSE), 1)
+	$(CC) $(OUR_ARCH) -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,./$(notdir $@) -o $@ $^
+else
+	@$(CC) $(OUR_ARCH) -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,./$(notdir $@) -o $@ $^
+endif
+	@echo "[DYLIB][DBG] $(notdir $(SHR_LIBD))"
+else ifeq ($(TGTARCH), x64-linux)
+ifeq ($(DS_VERBOSE), 1)
+	LinkSharedLibs64 $(AR_DST_D) $(SHR_LIBD) $(SHR_STEM) $(ARCHIVE) \
+        DEBUG $(CXX)
+#	$(CC) $(OUR_ARCH) -shared -o $@ -Wl,--whole-archive,-soname,./$(notdir $@) $^ -Wl,--no-whole-archive
+else
+	@LinkSharedLibs64 $(AR_DST_D) $(SHR_LIBD) $(SHR_STEM) $(ARCHIVE) \
+        DEBUG $(CXX)
+#	@$(CC) $(OUR_ARCH) -shared -o $@ -Wl,--whole-archive,-soname,./$(notdir $@) $^ -Wl,--no-whole-archive
+endif
+	@echo "[SO][DBG]    $(notdir $(SHR_LIBD))"
+	@echo "             $(SHR_STEM).d.so"
+	@echo "             $(SHR_STEM).d.so.1"
+endif
+####################### Release #############################################
+$(OBJS_CXX_NSTL_R) : $(DST_R)/%.o: %.cxx
+ifeq ($(DS_VERBOSE), 1)
+	$(CXX) $(CXX_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+else
+	@$(CXX) $(CXX_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+	@echo "[CXX][REL]   $<"
+endif
+###############################################################################
+$(OBJS_CXX_STL_R) : $(DST_R)/%.o: %.cxx
+ifeq ($(DS_VERBOSE), 1)
+	$(CXX) $(CXX_FLAGS_STL_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+else
+	@$(CXX) $(CXX_FLAGS_STL_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+	@echo "[CXX][REL]   $<"
+endif
+###############################################################################
+$(PP_CXX_NSTL_R) : $(DST_R)/%.ii: %.cxx
+	$(CXX) $(CXX_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -E $<
+###############################################################################
+$(PP_CXX_STL_R) : $(DST_R)/%.ii: %.cxx
+	$(CXX) $(CXX_FLAGS_STL_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -E $<
+###############################################################################
+$(OBJS_C_R) : $(DST_R)/%.o: %.c
+	$(CC) $(C_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
+###############################################################################
+$(PP_C_R) : $(DST_R)/%.i: %.c
+	$(CC) $(C_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -E $<
+###############################################################################
+$(DEPS_CXX_NSTL_R) : $(DST_R)/%.d: %.cxx
+	@set -e; $(RM) $@; \
+	$(CXX) -M -MQ '$(@:.d=.o)' $(CXX_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	$(RM) $@.$$$$
+###############################################################################
+$(DEPS_CXX_STL_R) : $(DST_R)/%.d: %.cxx
+	@set -e; $(RM) $@; \
+	$(CXX) -M -MQ '$(@:.d=.o)' $(CXX_FLAGS_STL_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	$(RM) $@.$$$$
+###############################################################################
+$(DEPS_C_R) : $(DST_R)/%.d: %.c
+	@set -e; $(RM) $@; \
+	$(CC) -M -MQ '$(@:.d=.o)' $(C_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	$(RM) $@.$$$$
+###############################################################################
+$(AR_R) : $(OBJS_C_R) $(OBJS_CXX_NSTL_R) $(OBJS_CXX_STL_R)
+ifeq ($(DS_VERBOSE), 1)
+	$(AR) $(AR_CREATE_FLAGS) $@ $^
+else
+	@$(AR) $(AR_CREATE_FLAGS) $@ $^ >/dev/null 2>&1
+	@echo "[AR][REL]    $(notdir $@)"
+endif
+###############################################################################
+$(SHR_R) : $(OBJS_C_R) $(OBJS_CXX_NSTL_R) $(OBJS_CXX_STL_R)
+ifeq ($(TGTARCH), x64-darwin-macos)
+ifeq ($(DS_VERBOSE), 1)
+	$(CC) $(OUR_ARCH) -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,./$(notdir $@) -o $@ $^
+else
+	@$(CC) $(OUR_ARCH) -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,./$(notdir $@) -o $@ $^
+endif
+	@echo "[DYLIB][REL] $(notdir $(SHR_LIBR))"
+else ifeq ($(TGTARCH), x64-linux)
+ifeq ($(DS_VERBOSE), 1)
+	LinkSharedLibs64 $(AR_DST_R) $(SHR_LIBR) $(SHR_STEM) $(ARCHIVE) \
+        RELEASE $(CXX)
+#	$(CC) $(OUR_ARCH) -shared -o $@ -Wl,--whole-archive,-soname,./$(notdir $@) $^ -Wl,--no-whole-archive
+else
+	@LinkSharedLibs64 $(AR_DST_R) $(SHR_LIBR) $(SHR_STEM) $(ARCHIVE) \
+        RELEASE $(CXX)
+#	@$(CC) $(OUR_ARCH) -shared -o $@ -Wl,--whole-archive,-soname,./$(notdir $@) $^ -Wl,--no-whole-archive
+endif
+	@echo "[SO][REL]    $(notdir $(SHR_LIBR))"
+	@echo "             $(SHR_STEM).r.so"
+	@echo "             $(SHR_STEM).r.so.1"
+endif
+###############################################################################
+#export MAKEINCLUDE_LLVM_X64 := TRUE
+endif
+###############################################################################

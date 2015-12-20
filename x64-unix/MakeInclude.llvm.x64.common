@@ -1,0 +1,197 @@
+###############################################################################
+# Created By: Subhashis Mohanty <subhashis@pixrune.com>
+# Created At: Fri Sep 25 12:21:07 PDT 2015
+# Copyright: (c) 2015 Subhashis Mohanty. All Rights Reserved.
+###############################################################################
+ifndef MAKEINCLUDE_LLVM_X64_COMMON
+###############################################################################
+# A GENERALIZED Makefile                                                      #
+#                                                                             #
+# It contains elements common to all our Makefiles and specializations.       #
+###############################################################################
+# Makefile include for arm-linux-androideabi
+###############################################################################
+# 'shell' and '$CUR' are defined in MakeInclude
+###############################################################################
+override CUR    := $(shell pwd)
+override CURDIR := $(CUR)
+###############################################################################
+# Required defines
+###############################################################################
+ifndef CLANG_DIR
+    $(warning  )
+    $(error CLANG_DIR must be defined)
+endif
+#
+ifeq ($(CLANG_DIR), "")
+    $(warning  )
+    $(error CLANG_DIR must be non-empty)
+endif
+###############################################################################
+ifndef CLANG_VER
+    $(warning  )
+    $(error CLANG_VER must be defined)
+endif
+#
+ifeq ($(CLANG_VER), "")
+    $(warning  )
+    $(error CLANG_VER must be non-empty)
+endif
+#
+ifndef CLANG_SDK_DIR
+    $(warning  )
+    $(error CLANG_SDK_DIR must be defined) # even if defined to ""
+endif
+###############################################################################
+# The purpose of ARCHIVE is to consolidate intermediates into a .a archive.
+###############################################################################
+ifndef ARCHIVE
+    $(warning  )
+    $(error ARCHIVE must be defined)
+endif
+ifeq ($(ARCHIVE), "")
+    $(warning  )
+    $(error ARCHIVE must be non-empty)
+endif
+###############################################################################
+# Target type definitions
+###############################################################################
+# Target image file format.
+###############################################################################
+ifeq ($(TGTARCH), x64-darwin-macos)
+    ifndef LOCAL_TGT_STR
+        LOCAL_TGT_STR = -DDS_TGT_X86_64_DARWIN -DDS_TGT_ANY_DARWIN
+    endif
+else ifeq ($(TGTARCH), x64-linux)
+    ifndef LOCAL_TGT_STR
+        LOCAL_TGT_STR = -DDS_TGT_X64
+    endif
+else
+    $(error Cannot set LOCAL_TGT_STR for $(TGTARCH))
+endif
+###############################################################################
+# Target compile time symbol definitions
+#
+# We are building a dynamic app.
+###############################################################################
+DEFINES := $(LOCAL_DEFINES_STR) $(LOCAL_TGT_STR) $(INHERITED_DEFINES_STR)
+###############################################################################
+# Compiler and environment
+#
+# We are building a dynamic app.
+###############################################################################
+GNUBIN := $(CLANG_DIR)/bin
+CC     := $(GNUBIN)/clang
+CXX    := $(GNUBIN)/clang++
+LD     := $(GNUBIN)/ld
+AR     := $(GNUBIN)/ar
+###############################################################################
+# Compiler optimization
+###############################################################################
+OPT := -O2 -Os -DNDEBUG -g
+###############################################################################
+ifeq ($(TGTARCH), x64-darwin-macos)
+#    LIBDIRS       := -L/usr/lib
+    LIBS          := $(LIB_CLIENT_DEP) -lc -lc++ -lpthread -lm
+else ifeq ($(TGTARCH), x64-linux)
+    CRTPATH       := $(GCCDIR)/lib/gcc/$(GCCHOST)/$(GCCVER)
+    LIBDIRS       := -L$(GCCDIR)/lib64 -L$(CRTPATH)
+    LIBS          := $(LIB_CLIENT_DEP) -lpthread -lstdc++ -lm -lgcc_s -lc -lgcc_s $(CRTPATH)/crtend.o $(GCCDIR)/lib64/crtn.o
+    LD_EXTRA_PRE  := --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2
+    LD_EXTRA_POST := $(GCCDIR)/lib64/crt1.o $(GCCDIR)/lib64/crti.o $(CRTPATH)/crtbegin.o
+    START_GROUP   := --start-group
+    END_GROUP     := --end-group
+else
+    $(error Cannot set LIBDIRS for $(TGTARCH))
+endif
+###############################################################################
+
+###############################################################################
+
+###############################################################################
+# Compiler options
+###############################################################################
+
+###############################################################################
+OUR_ARCH            := -m64
+OUR_ARCH_LD         := -arch x86_64
+###############################################################################
+
+###############################################################################
+OS_X64_FLAGS       := $(OUR_ARCH)
+###############################################################################
+
+###############################################################################
+ifeq ($(TGTARCH), x64-darwin-macos)
+OS_X64_FLAGS       := $(OS_X64_FLAGS) -mmacosx-version-min=10.7
+endif
+###############################################################################
+
+###############################################################################
+OS_RES_DIR       := $(CLANG_DIR)/lib/clang/$(CLANG_VER)
+###############################################################################
+OS_SYSROOT       := $(CLANG_SDK_DIR)
+###############################################################################
+#BASE_FLAGS          := $(OS_X64_FLAGS) -Wpointer-arith -Winline -Wall -Wcast-qual -Wcast-align -Wconversion -Wfloat-equal -Wpointer-arith -Wwrite-strings -Wpacked -Wdisabled-optimization -Werror -Wno-variadic-macros -fvisibility=hidden -ffunction-sections -fstack-protector -fomit-frame-pointer -fno-strict-aliasing -fPIC -fno-common -finline-limit=64 -Wa,--noexecstack
+###############################################################################
+# The next item gleaned from:
+#
+# clang++ -v -o Test Test.cxx of a simple hello world program
+###############################################################################
+ifeq ($(CLANG_SDK_DIR), LINUX_DONT_USE)
+# GLEANED_FLAGS       := -mthread-model posix -resource-dir $(OS_RES_DIR) -stdlib=libc++ -fcxx-exceptions -fexceptions -fcolor-diagnostics -fdiagnostics-show-option
+GLEANED_FLAGS       := -resource-dir $(OS_RES_DIR) -stdlib=libc++ -fcxx-exceptions -fexceptions -fcolor-diagnostics -fdiagnostics-show-option
+else
+GLEANED_FLAGS       := -mthread-model posix -resource-dir $(OS_RES_DIR) -isysroot $(OS_SYSROOT) -stdlib=libc++ -fcxx-exceptions -fexceptions -fcolor-diagnostics -fdiagnostics-show-option
+endif
+###############################################################################
+BASE_FLAGS          := $(GLEANED_FLAGS) $(OS_X64_FLAGS) -std=c++11 -Wpointer-arith -Winline -Wall -Wcast-qual -Wcast-align -Wconversion -Wfloat-equal -Wpointer-arith -Wwrite-strings -Wpacked -Wdisabled-optimization -Werror -Wno-variadic-macros -fvisibility=hidden -ffunction-sections -fstack-protector -fomit-frame-pointer -fno-strict-aliasing -fPIC -fno-common
+###############################################################################
+WARN_AGG_RET        := -Waggregate-return
+###############################################################################
+WARN_UNRCH          := -Wunreachable-code
+###############################################################################
+BASE_FLAGS_EXTRA    := -Wpointer-arith -Winline -Wall -Wcast-qual -Wcast-align -Wconversion -Wfloat-equal -Wpointer-arith -Wwrite-strings -Waggregate-return -Wpacked -Wshadow -Winline -Wdisabled-optimization
+###############################################################################
+STRICT_FLAGS        := -Wredundant-decls
+###############################################################################
+C_BASE_FLAGS        := -Wnested-externs -Wstrict-prototypes -Wmissing-prototype
+###############################################################################
+C_FLAGS_D           := -O0 -g -dwarf-column-info $(BASE_FLAGS) $(WARN_AGG_RET) $(WARN_UNRCH) $(C_BASE_FLAGS) $(DEFINES) -D__DEBUG__ -std=gnu99
+###############################################################################
+C_FLAGS_R           := $(BASE_FLAGS) $(WARN_AGG_RET) $(WARN_UNRCH) $(C_BASE_FLAGS) $(DEFINES) $(OPT) -std=gnu99
+###############################################################################
+# Subhashis Mohanty: [06/02/05] Removed -fno-elide-constructors as this was
+# causing an unreachable code error. Turns out that we may very well want the
+# optimization that the absence of this option causes. See man pages for g++
+###############################################################################
+CXX_BASE_FLAGS      := $(BASE_FLAGS) -ffor-scope -Wnon-virtual-dtor -Wreorder -Woverloaded-virtual -Wsign-promo -Wno-ctor-dtor-privacy -fexceptions -fno-rtti
+###############################################################################
+CXX_BASE_FLAGS      += -funit-at-a-time
+###############################################################################
+WARN_EFF_CXX        := -Weffc++
+###############################################################################
+STRICT_CXX_FLAGS    := -Wold-style-cast
+###############################################################################
+CXX_FLAGS_D         := -O0 -g $(CXX_BASE_FLAGS) $(WARN_EFF_CXX) $(WARN_AGG_RET) $(WARN_UNRCH) $(DEFINES) -D__DEBUG__
+###############################################################################
+CXX_FLAGS_STL_D     := -O0 -g $(CXX_BASE_FLAGS) $(DEFINES) -D__DEBUG__
+###############################################################################
+CXX_FLAGS_R         := $(CXX_BASE_FLAGS) $(WARN_EFF_CXX) $(WARN_AGG_RET) $(DEFINES) $(OPT)
+###############################################################################
+CXX_FLAGS_STL_R     := $(CXX_BASE_FLAGS) $(DEFINES) $(OPT)
+###############################################################################
+ifeq ($(DS_STL_TRIGGER), Yes)
+    CXX_FLAGS_D = $(CXX_FLAGS_STL_D)
+    CXX_FLAGS_R = $(CXX_FLAGS_STL_R)
+endif
+###############################################################################
+# Archiver
+###############################################################################
+AR_CREATE_FLAGS     := -crsv
+AR_LIST_FLAGS       := -tov
+AR_DEL_FLAGS        := -dv
+###############################################################################
+#export MAKEINCLUDE_LLVM_X64_COMMON := TRUE
+endif
+###############################################################################
