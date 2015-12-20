@@ -1,0 +1,69 @@
+###############################################################################
+# Created By: Subhashis Mohanty <subhashis@pixrune.com>
+# Created At: Fri Sep 25 12:21:07 PDT 2015
+# Copyright: (c) 2015 Subhashis Mohanty. All Rights Reserved.
+###############################################################################
+ifndef MAKEINCLUDE_X64
+###############################################################################
+# Makefile include for all environment-specific Makefile include files. For
+# example, this file should be included in MakeInclude.gnu, MakeInclude.arm
+# etc.
+###############################################################################
+# An environment variable, CODE_TOP, equal to the local root of software in
+# SVN must have been set. This will allow us to create paths relative
+# to CODE_TOP s.t. all the projects will have a way to expose their interfaces
+# and binaries. CODE_TOP must be passed to the Makefile somehow.
+# CODE_TOP = /cygdrive/c/Anumana/svn
+###############################################################################
+# Architecture, user, and target identifier.
+###############################################################################
+# Current directory.
+###############################################################################
+# Following is where all the action is.
+###############################################################################
+all:    dbg rel
+###############################################################################
+export SHELL             := /bin/bash
+export CUR               := $(shell pwd)
+###############################################################################
+ObjListWMinusF           := $(patsubst %.o,-F %.o,$(1))
+ObjListWBSlash           := $(subst /,\\,$(1))
+BSlashToFSlash           := $(subst \,\\,$(1))
+###############################################################################
+ifeq (0, $(MAKELEVEL))
+   ############################################################################
+   # User and architecture
+   ############################################################################
+   export WHOAMI        := $(shell whoami)
+   export HOSTTYPE      := $(shell uname -m)
+   ############################################################################
+   # Make
+   ############################################################################
+   export MAKE          := make host-type=$(HOSTTYPE)
+   ############################################################################
+   # Tools
+   ############################################################################
+   export RM            := /bin/rm -f
+   export SCRIPTSDIR    := $(CODE_TOP)/Scripts
+   export XPLATDIR      := $(CODE_TOP)/Lib/XPlat
+   export XPLATEXTDIR   := $(CODE_TOP)/Lib/XPlat-Ext
+   export DSUNIXLIBDIR  := $(CODE_TOP)/Lib/X64
+   export DSUNIXAPPDIR  := $(CODE_TOP)/Apps/X64
+   export COPY          := /bin/cp
+   ############################################################################
+   ifndef TGTARCH
+        ifndef MYUNAME
+	    export MYUNAME := $(shell uname -s)
+	endif
+        ifeq ($(MYUNAME), "Darwin")
+	    export TGTARCH := "x64-darwin-macos"
+        else ifeq ($(MYUNAME), "Linux")
+	    export TGTARCH := "x64-linux"
+        endif
+   endif
+   ############################################################################
+endif
+###############################################################################
+#export MAKEINCLUDE_X64 := TRUE
+endif
+###############################################################################
