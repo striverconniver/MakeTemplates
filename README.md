@@ -8,10 +8,10 @@ and set to the directory which contains the following directory structure:
 
 $(CODE_TOP)
 * AlguileBin - this directory holds project scripts and tools
-* XPlat - this is an abbreviation for cross-platform; this directory keeps all the cross-platform source trees that is private to this project
-* XPlat-Ext - the 'Ext' suffix indicates cross-platform source trees that is shared with the world at large
-* Lib/X64
-* Apps/X64
+* XPlat - 'XPlat' is an abbreviation for 'cross-platform'; this directory keeps all the cross-platform library source trees that is private to this project
+* XPlat-Ext - 'Ext' is an abbreviation for 'external'; this directory keeps all the cross-platform library source trees that are shared with the world at large
+* Lib/X64 - this directory keeps all the platform-dependent library source trees; the assumption is that we are only building for 64-bit archtectures
+* Apps/X64 - this directory keeps all the application source trees; again, the assumption is that we are only building for 64-bit architectures
 
 The AlguileBin directory is a separate GIT repository and can be obtained
 [here](https://github.com/striverconniver/AlguileBin.git).
