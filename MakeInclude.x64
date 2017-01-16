@@ -1,5 +1,5 @@
 ###############################################################################
-# Created By: Subhashis Mohanty <subhashis@doublesl.it>
+# Created By: Subhashis Mohanty <subhashis@alguile.com>
 # Created At: Fri Sep 25 12:21:07 PDT 2015
 # Copyright: (c) 2015 Subhashis Mohanty. All Rights Reserved.
 ###############################################################################
@@ -13,7 +13,6 @@ ifndef MAKEINCLUDE_X64
 # SVN must have been set. This will allow us to create paths relative
 # to CODE_TOP s.t. all the projects will have a way to expose their interfaces
 # and binaries. CODE_TOP must be passed to the Makefile somehow.
-# CODE_TOP = /cygdrive/c/Anumana/svn
 ###############################################################################
 # Architecture, user, and target identifier.
 ###############################################################################
