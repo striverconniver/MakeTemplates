@@ -66,7 +66,7 @@ ifndef CODE_TOP
     $(warning  )
     $(warning "At the top-level (in directory containing 3rdParty, Corp, etc.)")
     $(warning  )
-    $(warning "$ source Scripts/DevEnv")
+    $(warning "$ source AlguileBin/DevEnv")
     $(warning  )
     $(error CODE_TOP must be defined!)
 endif
@@ -76,7 +76,7 @@ ifeq ($(CODE_TOP), "")
     $(warning  )
     $(warning "At the top-level (in directory containing 3rdParty, Corp, etc.)")
     $(warning  )
-    $(warning "$ source Scripts/DevEnv")
+    $(warning "$ source AlguileBin/DevEnv")
     $(warning  )
     $(error CODE_TOP must be non-empty!)
 endif

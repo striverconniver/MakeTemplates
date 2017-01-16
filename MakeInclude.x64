@@ -43,7 +43,7 @@ ifeq (0, $(MAKELEVEL))
    # Tools
    ############################################################################
    export RM            := /bin/rm -f
-   export SCRIPTSDIR    := $(CODE_TOP)/Scripts
+   export SCRIPTSDIR    := $(CODE_TOP)/AlguileBin
    export XPLATDIR      := $(CODE_TOP)/Lib/XPlat
    export XPLATEXTDIR   := $(CODE_TOP)/Lib/XPlat-Ext
    export DSUNIXLIBDIR  := $(CODE_TOP)/Lib/X64
