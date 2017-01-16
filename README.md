@@ -1,10 +1,19 @@
-# **DoubleSlit MakeTemplates**
-This repository includes Make template and include files for building C/C++
+# **MakeTemplates**
+This repository includes Make templates and include files for building C/C++
 projects under Linux and Mac OS X. Libraries, archives, shared libraries
 and executables can be **made** with the help of files in this repository.
 
-Given that other higher-level repositories will always clamor for
-documentation, it seems unlikely that I will document the structure of this
-repository. Suffice it to write that **use** of this repository will be
-documented in those higher-level repositories.
+These template files rely on environment variable CODE_TOP to be defined
+and set to the directory which contains the following directory structure:
+
+$(CODE_TOP)/AlguileBin
+           /XPlat
+           /XPlat-Ext
+           /Lib/X64
+           /Apps/X64
+
+The AlguileBin directory is a separate GIT repository and can be obtained
+[here](https://github.com/striverconniver/AlguileBin.git).
+
+   
 
