@@ -3,11 +3,7 @@
 # Created At: Fri Sep 25 12:21:07 PDT 2015
 # Copyright: (c) 2015 Subhashis Mohanty. All Rights Reserved.
 ###############################################################################
-ifndef MAKEINCLUDE_X64
-###############################################################################
-# Makefile include for all environment-specific Makefile include files. For
-# example, this file should be included in MakeInclude.gnu, MakeInclude.arm
-# etc.
+ifndef ALGUILE_MAKEINCLUDE_X64
 ###############################################################################
 # An environment variable, CODE_TOP, equal to the local root of software in
 # SVN must have been set. This will allow us to create paths relative
@@ -63,6 +59,6 @@ ifeq (0, $(MAKELEVEL))
    ############################################################################
 endif
 ###############################################################################
-#export MAKEINCLUDE_X64 := TRUE
+export ALGUILE_MAKEINCLUDE_X64 := TRUE
 endif
 ###############################################################################
