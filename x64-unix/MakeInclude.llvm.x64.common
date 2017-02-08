@@ -60,11 +60,11 @@ endif
 ###############################################################################
 ifeq ($(TGTARCH), x64-darwin-macos)
     ifndef LOCAL_TGT_STR
-        LOCAL_TGT_STR = -DDS_TGT_X86_64_DARWIN -DDS_TGT_ANY_DARWIN
+        LOCAL_TGT_STR = -DAL_TGT_X86_64_DARWIN -DAL_TGT_ANY_DARWIN
     endif
 else ifeq ($(TGTARCH), x64-linux)
     ifndef LOCAL_TGT_STR
-        LOCAL_TGT_STR = -DDS_TGT_X64
+        LOCAL_TGT_STR = -DAL_TGT_X64
     endif
 else
     $(error Cannot set LOCAL_TGT_STR for $(TGTARCH))
@@ -181,7 +181,7 @@ CXX_FLAGS_R         := $(CXX_BASE_FLAGS) $(WARN_EFF_CXX) $(WARN_AGG_RET) $(DEFIN
 ###############################################################################
 CXX_FLAGS_STL_R     := $(CXX_BASE_FLAGS) $(DEFINES) $(OPT)
 ###############################################################################
-ifeq ($(DS_STL_TRIGGER), Yes)
+ifeq ($(AL_STL_TRIGGER), Yes)
     CXX_FLAGS_D = $(CXX_FLAGS_STL_D)
     CXX_FLAGS_R = $(CXX_FLAGS_STL_R)
 endif

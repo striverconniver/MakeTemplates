@@ -15,24 +15,24 @@ ifeq ($(A_BRANCH), "")
     $(error A_BRANCH must be non-empty!)
 endif
 ###############################################################################
-ifndef DS_ARCH
-    $(error DS_ARCH must be defined!)
+ifndef AL_ARCH
+    $(error AL_ARCH must be defined!)
 endif
 ###############################################################################
-ifeq ($(DS_ARCH), "")
+ifeq ($(AL_ARCH), "")
     $(warning  )
-    $(error DS_ARCH must be non-empty!)
+    $(error AL_ARCH must be non-empty!)
 endif
 ###############################################################################
-ifndef DS_APPROOTDIR
-    $(error DS_APPROOTDIR must be defined!)
+ifndef AL_APPROOTDIR
+    $(error AL_APPROOTDIR must be defined!)
 endif
 ###############################################################################
-ifeq ($(DS_LIBROOTDIR), "")
-    $(error DS_LIBROOTDIR must be non-empty!)
+ifeq ($(AL_LIBROOTDIR), "")
+    $(error AL_LIBROOTDIR must be non-empty!)
 endif
 ###############################################################################
-TARGET   = DSLib$(A_BRANCH)Lib
+TARGET   = ALLib$(A_BRANCH)Lib
 ###############################################################################
 ifdef A_BRANCH_NOLIB
     TPLAIN   = $(A_BRANCH)
@@ -54,7 +54,7 @@ PRJ_NAME = ../../../
 DIR_PRJ  = ../../..
 DIR_SUB  = ../..
 ###############################################################################
-TARGETTYPE = DS_NET_APP
+TARGETTYPE = AL_NET_APP
 ###############################################################################
 ifeq ($(TGTARCH), "")
     $(warning  )
@@ -84,35 +84,35 @@ endif
 export D_STR         := External/Lib/$(TGTARCH)/Debug
 export R_STR         := External/Lib/$(TGTARCH)/Release
 ###############################################################################
-DS_DEPDIR_D         := $(patsubst %,-L$(XPLATDIR)/%Lib/$(D_STR),$(DS_ARCHIVES))
-DS_DEPDIR_D         += $(patsubst %,-L$(XPLATEXTDIR)/%Lib/$(D_STR),$(DS_EXT_ARCHIVES))
-DS_DEPDIR_D         += -L$(DS_APPROOTDIR)/$(A_BRANCH)/$(D_STR)
+AL_DEPDIR_D         := $(patsubst %,-L$(XPLATDIR)/%Lib/$(D_STR),$(AL_ARCHIVES))
+AL_DEPDIR_D         += $(patsubst %,-L$(XPLATEXTDIR)/%Lib/$(D_STR),$(AL_EXT_ARCHIVES))
+AL_DEPDIR_D         += -L$(AL_APPROOTDIR)/$(A_BRANCH)/$(D_STR)
 #
-DS_DEPDIR_R         := $(patsubst %,-L$(XPLATDIR)/%Lib/$(R_STR),$(DS_ARCHIVES))
-DS_DEPDIR_R         += $(patsubst %,-L$(XPLATEXTDIR)/%Lib/$(R_STR),$(DS_EXT_ARCHIVES))
-DS_DEPDIR_R         += -L$(DS_APPROOTDIR)/$(A_BRANCH)/$(R_STR)
+AL_DEPDIR_R         := $(patsubst %,-L$(XPLATDIR)/%Lib/$(R_STR),$(AL_ARCHIVES))
+AL_DEPDIR_R         += $(patsubst %,-L$(XPLATEXTDIR)/%Lib/$(R_STR),$(AL_EXT_ARCHIVES))
+AL_DEPDIR_R         += -L$(AL_APPROOTDIR)/$(A_BRANCH)/$(R_STR)
 ###############################################################################
 export LOCAL_FLAGS = -fPIC
 ###############################################################################
-export DS_Test      :=
+export AL_Test      :=
 ###############################################################################
 ifeq ($(TGTARCH), x64-linux)
     export APP_LIBDIRS   += -L/usr/lib64
 endif
 ###############################################################################
-export APP_LIBDIRS_D := $(DS_DEPDIR_D) $(APP_LIBDIRS)
+export APP_LIBDIRS_D := $(AL_DEPDIR_D) $(APP_LIBDIRS)
 ###############################################################################
-export APP_LIBDIRS_R := $(DS_DEPDIR_R) $(APP_LIBDIRS)
+export APP_LIBDIRS_R := $(AL_DEPDIR_R) $(APP_LIBDIRS)
 ###############################################################################
 export LIBS_LOCAL    += 
 ###############################################################################
-LIBS_LOCAL_S_D       := $(patsubst %,lib%$(DS_ARCH).d.1.0.dylib,$(DS_ARCHIVES_ALL))
+LIBS_LOCAL_S_D       := $(patsubst %,lib%$(AL_ARCH).d.1.0.dylib,$(AL_ARCHIVES_ALL))
 LIBS_LOCAL_S_D       += lib$(A_BRANCH).d.1.0.dylib
 #
-LIBS_LOCAL_S_R       := $(patsubst %,lib%$(DS_ARCH).r.1.0.dylib,$(DS_ARCHIVES_ALL))
+LIBS_LOCAL_S_R       := $(patsubst %,lib%$(AL_ARCH).r.1.0.dylib,$(AL_ARCHIVES_ALL))
 LIBS_LOCAL_S_R       += lib$(A_BRANCH).r.1.0.dylib
 ###############################################################################
-include $(DS_APPROOTDIR)/$(TPLAIN)/External/MakeTemplates/x64-unix/MakeInclude.$(TPLAIN).def.x64
+include $(AL_APPROOTDIR)/$(TPLAIN)/External/MakeTemplates/x64-unix/MakeInclude.$(TPLAIN).def.x64
 ###############################################################################
 # ifeq ($(ROUTE), INDIRECT)
 #      export DEP_LIB_CLEAN_D  :=

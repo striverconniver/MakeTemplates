@@ -156,7 +156,7 @@ endif
 
 ####################### Clean ##############################################
 clean_dbg: $(DEP_LIB_CLEAN_D)
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(RM) $(DEPS_DS) $(ALL_D_BINARIES) $(PP_DS)
 else
 	@$(RM) $(DEPS_DS) $(ALL_D_BINARIES) $(PP_DS)
@@ -167,7 +167,7 @@ else
 endif
 ###############################################################################
 clean_rel: $(DEP_LIB_CLEAN_R)
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(RM) $(DEPS_RS) $(ALL_R_BINARIES) $(PP_RS)
 else
 	@$(RM) $(DEPS_RS) $(ALL_R_BINARIES) $(PP_RS)
@@ -178,7 +178,7 @@ else
 endif
 ####################### Debug #############################################
 $(OBJS_CXX_NSTL_D) : $(DST_D)/%.o: %.cxx
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(CXX) $(CXX_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
 else
 	@$(CXX) $(CXX_FLAGS_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
@@ -186,7 +186,7 @@ else
 endif
 ###############################################################################
 $(OBJS_CXX_STL_D) : $(DST_D)/%.o: %.cxx
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(CXX) $(CXX_FLAGS_STL_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
 else
 	@$(CXX) $(CXX_FLAGS_STL_D) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
@@ -224,7 +224,7 @@ $(DEPS_C_D) : $(DST_D)/%.d: %.c
 	$(RM) $@.$$$$
 ###############################################################################
 $(AR_D) : $(OBJS_C_D) $(OBJS_CXX_NSTL_D) $(OBJS_CXX_STL_D) 
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(AR) $(AR_CREATE_FLAGS) $@ $^
 else
 	@$(AR) $(AR_CREATE_FLAGS) $@ $^ >/dev/null 2>&1
@@ -233,14 +233,14 @@ endif
 ###############################################################################
 $(SHR_D) : $(OBJS_C_D) $(OBJS_CXX_NSTL_D) $(OBJS_CXX_STL_D)
 ifeq ($(TGTARCH), x64-darwin-macos)
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(CC) $(OUR_ARCH) -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,./$(notdir $@) -o $@ $^
 else
 	@$(CC) $(OUR_ARCH) -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,./$(notdir $@) -o $@ $^
 endif
 	@echo "[DYLIB][DBG] $(notdir $(SHR_LIBD))"
 else ifeq ($(TGTARCH), x64-linux)
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	LinkSharedLibs64 $(AR_DST_D) $(SHR_LIBD) $(SHR_STEM) $(ARCHIVE) \
         DEBUG $(CXX)
 #	$(CC) $(OUR_ARCH) -shared -o $@ -Wl,--whole-archive,-soname,./$(notdir $@) $^ -Wl,--no-whole-archive
@@ -255,7 +255,7 @@ endif
 endif
 ####################### Release #############################################
 $(OBJS_CXX_NSTL_R) : $(DST_R)/%.o: %.cxx
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(CXX) $(CXX_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
 else
 	@$(CXX) $(CXX_FLAGS_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
@@ -263,7 +263,7 @@ else
 endif
 ###############################################################################
 $(OBJS_CXX_STL_R) : $(DST_R)/%.o: %.cxx
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(CXX) $(CXX_FLAGS_STL_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
 else
 	@$(CXX) $(CXX_FLAGS_STL_R) $(LOCAL_FLAGS) $(INC_DIRECTIVE) -o $@ -c $<
@@ -301,7 +301,7 @@ $(DEPS_C_R) : $(DST_R)/%.d: %.c
 	$(RM) $@.$$$$
 ###############################################################################
 $(AR_R) : $(OBJS_C_R) $(OBJS_CXX_NSTL_R) $(OBJS_CXX_STL_R)
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(AR) $(AR_CREATE_FLAGS) $@ $^
 else
 	@$(AR) $(AR_CREATE_FLAGS) $@ $^ >/dev/null 2>&1
@@ -310,14 +310,14 @@ endif
 ###############################################################################
 $(SHR_R) : $(OBJS_C_R) $(OBJS_CXX_NSTL_R) $(OBJS_CXX_STL_R)
 ifeq ($(TGTARCH), x64-darwin-macos)
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	$(CC) $(OUR_ARCH) -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,./$(notdir $@) -o $@ $^
 else
 	@$(CC) $(OUR_ARCH) -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,1.0,-current_version,1.0,-install_name,./$(notdir $@) -o $@ $^
 endif
 	@echo "[DYLIB][REL] $(notdir $(SHR_LIBR))"
 else ifeq ($(TGTARCH), x64-linux)
-ifeq ($(DS_VERBOSE), 1)
+ifeq ($(AL_VERBOSE), 1)
 	LinkSharedLibs64 $(AR_DST_R) $(SHR_LIBR) $(SHR_STEM) $(ARCHIVE) \
         RELEASE $(CXX)
 #	$(CC) $(OUR_ARCH) -shared -o $@ -Wl,--whole-archive,-soname,./$(notdir $@) $^ -Wl,--no-whole-archive

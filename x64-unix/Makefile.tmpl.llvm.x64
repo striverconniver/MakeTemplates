@@ -15,26 +15,26 @@ ifeq ($(A_BRANCH), "")
     $(error A_BRANCH must be non-empty!)
 endif
 ###############################################################################
-ifndef DS_ARCH
-    $(error DS_ARCH must be defined!)
+ifndef AL_ARCH
+    $(error AL_ARCH must be defined!)
 endif
 ###############################################################################
-ifeq ($(DS_ARCH), "")
+ifeq ($(AL_ARCH), "")
     $(warning  )
-    $(error DS_ARCH must be non-empty!)
+    $(error AL_ARCH must be non-empty!)
 endif
 ###############################################################################
-ifndef DS_LIBROOTDIR
-    $(error DS_LIBROOTDIR must be defined!)
+ifndef AL_LIBROOTDIR
+    $(error AL_LIBROOTDIR must be defined!)
 endif
 ###############################################################################
-ifeq ($(DS_LIBROOTDIR), "")
-    $(error DS_LIBROOTDIR must be non-empty!)
+ifeq ($(AL_LIBROOTDIR), "")
+    $(error AL_LIBROOTDIR must be non-empty!)
 endif
 ###############################################################################
-B_BRANCH = $(A_BRANCH)$(DS_ARCH)
+B_BRANCH = $(A_BRANCH)$(AL_ARCH)
 ###############################################################################
-TARGET   = DSLib$(B_BRANCH)Lib
+TARGET   = ALLib$(B_BRANCH)Lib
 ifdef A_BRANCH_NOLIB
 TPLAIN   = $(A_BRANCH)
 else
@@ -82,11 +82,11 @@ endif
 ###############################################################################
 export LOCAL_FLAGS = -fpic
 ###############################################################################
-export DS_$(TPLAN) :=
+export AL_$(TPLAN) :=
 ###############################################################################
 include $(CODE_TOP)/MakeTemplates/MakeInclude.x64
 ###############################################################################
-include $(DS_LIBROOTDIR)/$(TPLAIN)/External/MakeTemplates/x64-unix/MakeInclude.$(TPLAIN).def.x64
+include $(AL_LIBROOTDIR)/$(TPLAIN)/External/MakeTemplates/x64-unix/MakeInclude.$(TPLAIN).def.x64
 ###############################################################################
 ifeq ($(ROUTE), INDIRECT)
     export DEP_LIB_CLEAN_D  :=
