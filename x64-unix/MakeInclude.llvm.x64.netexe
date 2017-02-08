@@ -161,7 +161,7 @@ ifeq ($(AL_VERBOSE), 1)
 	$(RM) $(DEPS_DS) $(ALL_D_BINARIES) $(PP_DS)
 else
 	@$(RM) $(DEPS_DS) $(ALL_D_BINARIES) $(PP_DS)
-	@echo [CLEAN]
+	@echo [CLEAN-D]
 	@echo "	$(notdir $(DEPS_DS))"
 	@echo "	$(notdir $(ALL_D_BINARIES))"
 	@echo "	$(notdir $(PP_DS))"
@@ -172,7 +172,7 @@ ifeq ($(AL_VERBOSE), 1)
 	$(RM) $(DEPS_RS) $(ALL_R_BINARIES) $(PP_RS)
 else
 	@$(RM) $(DEPS_RS) $(ALL_R_BINARIES) $(PP_RS)
-	@echo [CLEAN]
+	@echo [CLEAN-R]
 	@echo "	$(notdir $(DEPS_RS))"
 	@echo "	$(notdir $(ALL_R_BINARIES))"
 	@echo "	$(notdir $(PP_RS))"
