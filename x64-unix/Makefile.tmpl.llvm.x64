@@ -34,7 +34,7 @@ endif
 ###############################################################################
 B_BRANCH = $(A_BRANCH)$(AL_ARCH)
 ###############################################################################
-TARGET   = ALLib$(B_BRANCH)Lib
+TARGET   = AlLib$(B_BRANCH)Lib
 ifdef A_BRANCH_NOLIB
 TPLAIN   = $(A_BRANCH)
 else

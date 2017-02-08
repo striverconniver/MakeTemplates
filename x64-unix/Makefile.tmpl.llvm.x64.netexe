@@ -32,7 +32,7 @@ ifeq ($(AL_LIBROOTDIR), "")
     $(error AL_LIBROOTDIR must be non-empty!)
 endif
 ###############################################################################
-TARGET   = ALLib$(A_BRANCH)Lib
+TARGET   = AlLib$(A_BRANCH)Lib
 ###############################################################################
 ifdef A_BRANCH_NOLIB
     TPLAIN   = $(A_BRANCH)
