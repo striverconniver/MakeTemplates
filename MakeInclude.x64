@@ -42,8 +42,8 @@ ifeq (0, $(MAKELEVEL))
    export SCRIPTSDIR    := $(CODE_TOP)/AlguileBin
    export XPLATDIR      := $(CODE_TOP)/Lib/XPlat
    export XPLATEXTDIR   := $(CODE_TOP)/Lib/XPlat-Ext
-   export DSUNIXLIBDIR  := $(CODE_TOP)/Lib/X64
-   export DSUNIXAPPDIR  := $(CODE_TOP)/Apps/X64
+   export ALUNIXLIBDIR  := $(CODE_TOP)/Lib/X64
+   export ALUNIXAPPDIR  := $(CODE_TOP)/Apps/X64
    export COPY          := /bin/cp
    ############################################################################
    ifndef TGTARCH
