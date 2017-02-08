@@ -41,7 +41,7 @@ ifeq (0, $(MAKELEVEL))
    export RM            := /bin/rm -f
    export SCRIPTSDIR    := $(CODE_TOP)/AlguileBin
    export XPLATDIR      := $(CODE_TOP)/Lib/XPlat
-   export XPLATEXTDIR   := $(CODE_TOP)/Lib/XPlat-Ext
+   export XPLATEXTDIR   := $(CODE_TOP)/Lib/XPlatE
    export ALUNIXLIBDIR  := $(CODE_TOP)/Lib/X64
    export ALUNIXAPPDIR  := $(CODE_TOP)/Apps/X64
    export COPY          := /bin/cp
