@@ -162,9 +162,11 @@ ifeq ($(AL_VERBOSE), 1)
 else
 	@$(RM) $(DEPS_DS) $(ALL_D_BINARIES) $(PP_DS)
 	@echo [CLEAN-D]
+ifeq ($(AL_VERBOSE), 1)
 	@echo "	$(notdir $(DEPS_DS))"
 	@echo "	$(notdir $(ALL_D_BINARIES))"
 	@echo "	$(notdir $(PP_DS))"
+endif
 endif
 ###############################################################################
 clean_rel: $(DEP_LIB_CLEAN_R)
@@ -173,9 +175,11 @@ ifeq ($(AL_VERBOSE), 1)
 else
 	@$(RM) $(DEPS_RS) $(ALL_R_BINARIES) $(PP_RS)
 	@echo [CLEAN-R]
+ifeq ($(AL_VERBOSE), 1)
 	@echo "	$(notdir $(DEPS_RS))"
 	@echo "	$(notdir $(ALL_R_BINARIES))"
 	@echo "	$(notdir $(PP_RS))"
+endif
 endif
 ####################### Debug #############################################
 $(OBJS_CXX_NSTL_D) : $(DST_D)/%.o: %.cxx
