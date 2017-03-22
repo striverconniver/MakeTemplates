@@ -56,8 +56,9 @@ MK_AR_DST_R := $(shell mkdir -p $(AR_DST_R))
 # see some internal headers.
 ###############################################################################
 ifeq ($(TGTARCH), x64-linux)
-GCCINCLOC  = /usr/include/c++/$(GCCVER)
-INC_SYSTEM = -I$(GCCINCLOC) -I$(GCCINCLOC)/$(GCCHOST)
+#GCCINCLOC  = /usr/include/c++/$(GCCVER)
+#INC_SYSTEM = -I$(GCCINCLOC) -I$(GCCINCLOC)/$(GCCHOST)
+INC_SYSTEM  = 
 else ifeq ($(TGTARCH), x64-darwin-macos)
 INC_SYSTEM  = 
 endif
