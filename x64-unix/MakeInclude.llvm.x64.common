@@ -140,9 +140,9 @@ OS_SYSROOT       := $(CLANG_SDK_DIR)
 ###############################################################################
 ifeq ($(CLANG_SDK_DIR), LINUX_DONT_USE)
 # GLEANED_FLAGS       := -mthread-model posix -resource-dir $(OS_RES_DIR) -stdlib=libc++ -fcxx-exceptions -fexceptions -fcolor-diagnostics -fdiagnostics-show-option
-GLEANED_FLAGS       := -resource-dir $(OS_RES_DIR) -stdlib=libc++ -fcxx-exceptions -fexceptions -fcolor-diagnostics -fdiagnostics-show-option
+GLEANED_FLAGS       := -resource-dir $(OS_RES_DIR) -stdlib=libstdc++ -fcxx-exceptions -fexceptions -fcolor-diagnostics -fdiagnostics-show-option
 else
-GLEANED_FLAGS       := -mthread-model posix -resource-dir $(OS_RES_DIR) -isysroot $(OS_SYSROOT) -stdlib=libc++ -fcxx-exceptions -fexceptions -fcolor-diagnostics -fdiagnostics-show-option
+GLEANED_FLAGS       := -mthread-model posix -resource-dir $(OS_RES_DIR) -isysroot $(OS_SYSROOT) -stdlib=libstdc++ -fcxx-exceptions -fexceptions -fcolor-diagnostics -fdiagnostics-show-option
 endif
 ###############################################################################
 BASE_FLAGS          := $(GLEANED_FLAGS) $(OS_X64_FLAGS) -std=c++11 -Wpointer-arith -Winline -Wall -Wcast-qual -Wcast-align -Wconversion -Wfloat-equal -Wpointer-arith -Wwrite-strings -Wpacked -Wdisabled-optimization -Werror -Wno-variadic-macros -fvisibility=hidden -ffunction-sections -fstack-protector -fomit-frame-pointer -fno-strict-aliasing -fPIC -fno-common
